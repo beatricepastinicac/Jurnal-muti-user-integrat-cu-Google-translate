@@ -1,0 +1,7 @@
+CREATE TABLE Notes (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    userId INT NOT NULL,
+    content NVARCHAR(MAX) NOT NULL,
+    language NVARCHAR(10) DEFAULT 'en',
+    FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE
+);

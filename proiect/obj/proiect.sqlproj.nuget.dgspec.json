@@ -1,0 +1,63 @@
+{
+  "format": 1,
+  "restore": {
+    "c:\\Users\\pasti\\OneDrive\\Desktop\\proiect TW\\proiect\\proiect.sqlproj": {}
+  },
+  "projects": {
+    "c:\\Users\\pasti\\OneDrive\\Desktop\\proiect TW\\proiect\\proiect.sqlproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "c:\\Users\\pasti\\OneDrive\\Desktop\\proiect TW\\proiect\\proiect.sqlproj",
+        "projectName": "proiect",
+        "projectPath": "c:\\Users\\pasti\\OneDrive\\Desktop\\proiect TW\\proiect\\proiect.sqlproj",
+        "packagesPath": "C:\\Users\\pasti\\.nuget\\packages\\",
+        "outputPath": "c:\\Users\\pasti\\OneDrive\\Desktop\\proiect TW\\proiect\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\pasti\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net46": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "noWarn": [
+            "NU5128"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net46": {
+          "targetAlias": "netstandard2.1",
+          "dependencies": {
+            "Microsoft.NETFramework.ReferenceAssemblies": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.0.0, )",
+              "autoReferenced": true
+            }
+          }
+        }
+      }
+    }
+  }
+}
