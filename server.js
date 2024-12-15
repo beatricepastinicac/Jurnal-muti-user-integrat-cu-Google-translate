@@ -1,21 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const sequelize=require('./config/db');
-const User = require('./models/User');
-const Note = require('./models/Note');
+const sequelize = require('./config/db');
+const routes = require('./routes/routes'); // Importă rutele
 
 const app = express();
-//middleware
-app.use(bodyParser.json()); //=>json 
-app.use(cors()); //permite cereri din alte domenii
 
-//ruta de test
+// Middleware
+app.use(bodyParser.json()); // Transformă request-urile în format JSON
+app.use(cors()); // Permite cereri din alte domenii
+
+// Ruta de test
 app.get('/', (req, res) => res.send('Servărul rulează corect!'));
 
+// Adaugă rutele definite
+app.use('/api', routes); // Prefix pentru toate rutele din routes.js
 
-// Sincronizarea db si pornire server 
-sequelize.sync({ force: false })              // force: false = tine datele existente
+// Sincronizarea db și pornirea serverului
+sequelize.sync({ force: false }) // force: false păstrează datele existente
   .then(() => {
     console.log('Modelele au fost sincronizate cu baza de date.');
 
