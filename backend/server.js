@@ -7,15 +7,15 @@ const journalRoutes = require('./routes/journalRoutes');
 
 const app = express();
 
-// Middleware
+
 app.use(cors());
 app.use(express.json());
 
-// Routes
+
 app.use('/api/users', userRoutes);
 app.use('/api/journal', journalRoutes);
 
-// Error handling
+
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ 
@@ -26,7 +26,7 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-// Sync database and start server
+
 sequelize.sync({ alter: true }).then(() => {
     app.listen(PORT, () => {
         console.log(`Serverul rulează pe portul ${PORT}`);

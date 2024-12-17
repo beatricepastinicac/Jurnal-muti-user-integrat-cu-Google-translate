@@ -2,7 +2,7 @@ const { Sequelize } = require('sequelize');
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
-// Configurare opțiuni Sequelize
+// Config Sequelize
 const sequelizeConfig = {
     host: process.env.DB_HOST,
     dialect: 'mysql',
@@ -11,7 +11,7 @@ const sequelizeConfig = {
     pool: {
         max: 5,
         min: 0,
-        acquire: 30000,
+        acquire: 30000, 
         idle: 10000
     },
     define: {
@@ -24,7 +24,7 @@ const sequelizeConfig = {
 // Creare conexiune db
 (async () => {
     try {
-        // Conexiune temporară pentru a verifica baza de date
+        
         const connection = await mysql.createConnection({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
@@ -32,7 +32,7 @@ const sequelizeConfig = {
             charset: 'utf8mb4'
         });
 
-        // Crearea bazei de date dacă aceasta nu există
+
         await connection.query(`
             CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\`
             CHARACTER SET utf8mb4 
@@ -45,7 +45,7 @@ const sequelizeConfig = {
     }
 })();
 
-// Creare instanță Sequelize
+
 const sequelize = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USER,
@@ -53,7 +53,7 @@ const sequelize = new Sequelize(
     sequelizeConfig
 );
 
-// Verificare conexiune cu gestionare erori mai detaliată
+
 (async () => {
     try {
         await sequelize.authenticate();

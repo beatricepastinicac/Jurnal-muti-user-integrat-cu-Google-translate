@@ -2,7 +2,7 @@ const JournalEntry = require('../models/JournalEntry');
 const axios = require('axios');
 
 const journalController = {
-    // Creare intrare nouă în jurnal
+    
     create: async (req, res) => {
         try {
             const { title, content, originalLanguage = 'ro' } = req.body;
@@ -26,7 +26,7 @@ const journalController = {
         }
     },
 
-    // Obține toate intrările utilizatorului
+    
     getAllEntries: async (req, res) => {
         try {
             const entries = await JournalEntry.findAll({
@@ -44,7 +44,7 @@ const journalController = {
         }
     },
 
-    // Obține o intrare specifică
+   
     getEntry: async (req, res) => {
         try {
             const entry = await JournalEntry.findOne({
@@ -70,7 +70,7 @@ const journalController = {
         }
     },
 
-    // Actualizare intrare
+    
     updateEntry: async (req, res) => {
         try {
             const { title, content } = req.body;
@@ -105,7 +105,7 @@ const journalController = {
         }
     },
 
-    // Ștergere intrare
+    
     deleteEntry: async (req, res) => {
         try {
             const result = await JournalEntry.destroy({

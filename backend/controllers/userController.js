@@ -2,12 +2,12 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
 const userController = {
-    // Înregistrare utilizator nou
+    
     register: async (req, res) => {
         try {
             const { username, email, password } = req.body;
 
-            // Verifică dacă utilizatorul există deja
+           
             const existingUser = await User.findOne({ 
                 where: { 
                     [Op.or]: [
@@ -23,14 +23,14 @@ const userController = {
                 });
             }
 
-            // Creează utilizatorul nou
+
             const user = await User.create({
                 username,
                 email,
-                password // parola va fi hashuită prin hook-ul beforeCreate
+                password 
             });
 
-            // Generează token JWT
+            
             const token = jwt.sign(
                 { id: user.id },
                 process.env.JWT_SECRET || 'secret_key',
@@ -55,12 +55,11 @@ const userController = {
         }
     },
 
-    // Autentificare utilizator
+    
     login: async (req, res) => {
         try {
             const { email, password } = req.body;
 
-            // Găsește utilizatorul
             const user = await User.findOne({ where: { email } });
             if (!user) {
                 return res.status(401).json({ 
@@ -68,7 +67,6 @@ const userController = {
                 });
             }
 
-            // Verifică parola
             const isMatch = await user.comparePassword(password);
             if (!isMatch) {
                 return res.status(401).json({ 
@@ -76,7 +74,6 @@ const userController = {
                 });
             }
 
-            // Generează token
             const token = jwt.sign(
                 { id: user.id },
                 process.env.JWT_SECRET || 'secret_key',
@@ -101,7 +98,7 @@ const userController = {
         }
     },
 
-    // Obține profilul utilizatorului
+    
     getProfile: async (req, res) => {
         try {
             const user = await User.findByPk(req.user.id, {
