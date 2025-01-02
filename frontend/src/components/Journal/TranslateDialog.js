@@ -1,4 +1,3 @@
-// src/components/Journal/TranslateDialog.js
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -10,11 +9,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Typography,
-  Box,
   CircularProgress,
   Alert,
-  Paper
 } from '@mui/material';
 
 const TranslateDialog = ({ open, onClose, content, originalLanguage }) => {
@@ -28,109 +24,70 @@ const TranslateDialog = ({ open, onClose, content, originalLanguage }) => {
     { code: 'fr', name: 'Franceză' },
     { code: 'es', name: 'Spaniolă' },
     { code: 'de', name: 'Germană' },
-    { code: 'ro', name: 'Română' }
+    { code: 'ro', name: 'Română' },
   ].filter(lang => lang.code !== originalLanguage);
 
   const handleTranslate = async () => {
     setLoading(true);
     setError('');
-
-    const encodedParams = new URLSearchParams();
-    encodedParams.set('source_language', originalLanguage);
-    encodedParams.set('target_language', targetLanguage);
-    encodedParams.set('text', content);
-
-    const options = {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-        'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
-        'X-RapidAPI-Host': 'text-translator2.p.rapidapi.com'
-      },
-      body: encodedParams
-    };
+    setTranslatedText('');
 
     try {
-      const response = await fetch('https://text-translator2.p.rapidapi.com/translate', options);
-      const result = await response.json();
+      const response = await fetch('http://localhost:5000/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: content,
+          sourceLang: originalLanguage,
+          targetLang: targetLanguage,
+        }),
+      });
 
-      if (result.status === 'success') {
-        setTranslatedText(result.data.translatedText);
-      } else {
-        throw new Error(result.message || 'Eroare la traducere');
+      if (!response.ok) {
+        throw new Error('Eroare la traducere');
       }
+
+      const data = await response.json();
+      setTranslatedText(data.translatedText);
     } catch (error) {
-      setError('Eroare la traducere: ' + error.message);
+      console.error('Eroare la traducere:', error.message);
+      setError('Nu s-a putut realiza traducerea.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={onClose}
-      maxWidth="md"
-      fullWidth
-    >
-      <DialogTitle>Traducere</DialogTitle>
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Tradu textul</DialogTitle>
       <DialogContent>
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
-
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <InputLabel>Traduceți în</InputLabel>
-          <Select
-            value={targetLanguage}
-            onChange={(e) => setTargetLanguage(e.target.value)}
-            label="Traduceți în"
-          >
-            {languages.map(lang => (
-              <MenuItem key={lang.code} value={lang.code}>
-                {lang.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="subtitle1" gutterBottom>
-            Text original:
-          </Typography>
-          <Paper elevation={0} sx={{ p: 2, bgcolor: 'grey.100' }}>
-            <Typography>{content}</Typography>
-          </Paper>
-        </Box>
-
-        {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
-            <CircularProgress />
-          </Box>
-        ) : translatedText && (
-          <Box>
-            <Typography variant="subtitle1" gutterBottom>
-              Traducere:
-            </Typography>
-            <Paper elevation={0} sx={{ p: 2, bgcolor: 'grey.100' }}>
-              <Typography>{translatedText}</Typography>
-            </Paper>
-          </Box>
+        {loading && <CircularProgress />}
+        {error && <Alert severity="error">{error}</Alert>}
+        {!loading && !error && (
+          <>
+            <FormControl fullWidth>
+              <InputLabel>Limba țintă</InputLabel>
+              <Select
+                value={targetLanguage}
+                onChange={(e) => setTargetLanguage(e.target.value)}
+              >
+                {languages.map((lang) => (
+                  <MenuItem key={lang.code} value={lang.code}>
+                    {lang.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <p>Text tradus: {translatedText || 'N/A'}</p>
+          </>
         )}
       </DialogContent>
-
       <DialogActions>
-        <Button onClick={onClose}>
-          Închide
-        </Button>
-        <Button 
-          onClick={handleTranslate} 
-          variant="contained" 
-          disabled={loading}
-        >
-          {loading ? 'Se traduce...' : 'Traduceți'}
+        <Button onClick={onClose} color="secondary">Închide</Button>
+        <Button onClick={handleTranslate} color="primary" disabled={loading}>
+          Tradu
         </Button>
       </DialogActions>
     </Dialog>

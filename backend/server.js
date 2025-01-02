@@ -4,6 +4,8 @@ require('dotenv').config();
 const sequelize = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const journalRoutes = require('./routes/journalRoutes');
+const translateRoutes = require('./routes/translateRoutes');
+
 
 const app = express();
 
@@ -14,7 +16,7 @@ app.use(express.json());
 
 app.use('/api/users', userRoutes);
 app.use('/api/journal', journalRoutes);
-
+app.use('/api/translate', translateRoutes);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

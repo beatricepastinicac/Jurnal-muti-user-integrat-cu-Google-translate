@@ -8,22 +8,24 @@ import {
  Button,
  IconButton,
  Container,
- Avatar,
  Menu,
  MenuItem,
- Divider
+ Divider,
 } from '@mui/material';
 import {
- Menu as MenuIcon,
  AccountCircle,
- ExitToApp as LogoutIcon
+ ExitToApp as LogoutIcon,
+ Brightness4,
+ Brightness7
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const MainLayout = ({ children }) => {
  const navigate = useNavigate();
  const { user, logout } = useAuth();
+ const { mode, toggleTheme } = useTheme();
  const [anchorEl, setAnchorEl] = React.useState(null);
 
  const handleMenu = (event) => {
@@ -48,6 +50,10 @@ const MainLayout = ({ children }) => {
            Jurnal Multi-User
          </Typography>
          
+         <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
+           {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+         </IconButton>
+
          {user ? (
            <div>
              <IconButton
@@ -62,6 +68,8 @@ const MainLayout = ({ children }) => {
                open={Boolean(anchorEl)}
                onClose={handleClose}
                onClick={handleClose}
+               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
              >
                <MenuItem disabled>
                  <Typography variant="body2">
@@ -88,10 +96,8 @@ const MainLayout = ({ children }) => {
        </Toolbar>
      </AppBar>
 
-     {/* Toolbar spacing */}
      <Toolbar />
 
-     {/* Main content */}
      <Container 
        component="main" 
        sx={{ 
@@ -104,7 +110,6 @@ const MainLayout = ({ children }) => {
        {children}
      </Container>
 
-     {/* Footer */}
      <Box
        component="footer"
        sx={{
