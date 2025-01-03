@@ -1,40 +1,41 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import React from 'react' // importa react
+import { AppBar, Toolbar, Typography, Button } from '@mui/material' // componente material-ui
+import { useNavigate } from 'react-router-dom' // hook pt navigare intre pagini
+import { useAuth } from '../../context/AuthContext' // hook pt gestionarea autentificarii
 
+// componenta bara de navigare
 const Navbar = () => {
-  const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate() // instanta pt navigare
+  const { isAuthenticated, logout } = useAuth() // preia starea autentificarii si functia logout
 
   return (
-    <AppBar position="static">
+    <AppBar position="static"> {/* bara de navigare statica */}
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Jurnal Multi-User
+          jurnal multi-user {/* titlu aplicatie */}
         </Typography>
-        {isAuthenticated ? (
+        {isAuthenticated ? ( // daca user-ul este autentificat
           <>
             <Button color="inherit" onClick={() => navigate('/journal')}>
-              Jurnal
+              jurnal {/* buton pt accesarea jurnalului */}
             </Button>
             <Button color="inherit" onClick={logout}>
-              Deconectare
+              deconectare {/* buton pt logout */}
             </Button>
           </>
-        ) : (
+        ) : ( // daca user-ul nu este autentificat
           <>
             <Button color="inherit" onClick={() => navigate('/login')}>
-              Autentificare
+              autentificare {/* buton pt login */}
             </Button>
             <Button color="inherit" onClick={() => navigate('/register')}>
-              Înregistrare
+              înregistrare {/* buton pt inregistrare */}
             </Button>
           </>
         )}
       </Toolbar>
     </AppBar>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar // exporta componenta

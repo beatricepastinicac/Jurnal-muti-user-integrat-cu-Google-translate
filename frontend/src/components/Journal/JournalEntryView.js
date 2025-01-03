@@ -1,163 +1,168 @@
-// src/components/Journal/JournalEntryView.js
-import React, { useState } from 'react';
+import React, { useState } from 'react' // importa react si hook-ul useState
 import {
- Dialog,
- DialogTitle,
- DialogContent,
- DialogActions,
- Typography,
- Button,
- Box,
- Paper,
- Chip,
- IconButton,
- Tooltip
-} from '@mui/material';
-import {
- Edit as EditIcon,
- Delete as DeleteIcon,
- Translate as TranslateIcon,
- Share as ShareIcon,
- GetApp as ExportIcon
-} from '@mui/icons-material';
-import TranslateDialog from './TranslateDialog';
-import ShareDialog from './ShareDialog';
-import ExportDialog from './ExportDialog';
+  Dialog, // componenta pentru dialog
+  DialogTitle, // titlu dialog
+  DialogContent, // continut dialog
+  DialogActions, // actiuni dialog
+  Typography, // text stilizat
+  Button, // buton
+  Box, // container flex
+  Paper, // container stilizat
+  Chip, // eticheta stilizata
+  IconButton, // buton cu icon
+  Tooltip // explicatie tooltip
+} from '@mui/material'
 
+// importa iconite material-ui
+import {
+  Edit as EditIcon, // icon pentru editare
+  Delete as DeleteIcon, // icon pentru stergere
+  Translate as TranslateIcon, // icon pentru traducere
+  Share as ShareIcon, // icon pentru partajare
+  GetApp as ExportIcon // icon pentru export
+} from '@mui/icons-material'
+
+import TranslateDialog from './TranslateDialog' // dialog pentru traducere
+import ShareDialog from './ShareDialog' // dialog pentru partajare
+import ExportDialog from './ExportDialog' // dialog pentru export
+
+// componenta pentru vizualizarea unei intrari in jurnal
 const JournalEntryView = ({ entry, onClose, onEdit, onDelete }) => {
- const [translateOpen, setTranslateOpen] = useState(false);
- const [shareOpen, setShareOpen] = useState(false);
- const [exportOpen, setExportOpen] = useState(false);
+  const [translateOpen, setTranslateOpen] = useState(false) // stare pentru traducere deschisa
+  const [shareOpen, setShareOpen] = useState(false) // stare pentru partajare deschisa
+  const [exportOpen, setExportOpen] = useState(false) // stare pentru export deschis
 
- const languages = {
-   'ro': 'Română',
-   'en': 'Engleză',
-   'fr': 'Franceză',
-   'es': 'Spaniolă',
-   'de': 'Germană'
- };
+  // dictionar limbi disponibile
+  const languages = {
+    'ro': 'romana',
+    'en': 'engleza',
+    'fr': 'franceza',
+    'es': 'spaniola',
+    'de': 'germana'
+  }
 
- const formatDate = (dateString) => {
-   return new Date(dateString).toLocaleString('ro-RO', {
-     day: 'numeric',
-     month: 'long',
-     year: 'numeric',
-     hour: '2-digit',
-     minute: '2-digit'
-   });
- };
+  // functie pentru formatarea datei
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleString('ro-RO', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
 
- return (
-   <>
-     <Dialog
-       open={true}
-       onClose={onClose}
-       maxWidth="md"
-       fullWidth
-       PaperProps={{
-         sx: {
-           minHeight: '60vh',
-           display: 'flex',
-           flexDirection: 'column'
-         }
-       }}
-     >
-       <DialogTitle>
-         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-           <Typography variant="h6" component="div">
-             {entry.title}
-           </Typography>
-           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-             <Chip 
-               label={languages[entry.originalLanguage]} 
-               size="small" 
-               color="primary"
-             />
-             <Tooltip title="Editează">
-               <IconButton size="small" onClick={() => onEdit(entry)}>
-                 <EditIcon />
-               </IconButton>
-             </Tooltip>
-             <Tooltip title="Șterge">
-               <IconButton size="small" onClick={() => onDelete(entry.id)}>
-                 <DeleteIcon />
-               </IconButton>
-             </Tooltip>
-           </Box>
-         </Box>
-       </DialogTitle>
+  return (
+    <>
+      <Dialog
+        open={true} // dialog deschis
+        onClose={onClose} // inchidere dialog
+        maxWidth="md" // latime maxima
+        fullWidth // ocupa toata latimea disponibila
+        PaperProps={{
+          sx: {
+            minHeight: '60vh', // inaltime minima
+            display: 'flex', // layout flex
+            flexDirection: 'column' // directie verticala
+          }
+        }}
+      >
+        <DialogTitle>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h6" component="div">
+              {entry.title} {/* afiseaza titlul intrarii */}
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+              <Chip 
+                label={languages[entry.originalLanguage]} // limba originala a intrarii
+                size="small" 
+                color="primary"
+              />
+              <Tooltip title="editeaza"> {/* explicatie pentru editare */}
+                <IconButton size="small" onClick={() => onEdit(entry)}>
+                  <EditIcon /> {/* icon editare */}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="sterge"> {/* explicatie pentru stergere */}
+                <IconButton size="small" onClick={() => onDelete(entry.id)}>
+                  <DeleteIcon /> {/* icon stergere */}
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
+        </DialogTitle>
 
-       <DialogContent dividers sx={{ flexGrow: 1 }}>
-         <Paper 
-           elevation={0} 
-           sx={{ 
-             p: 2, 
-             bgcolor: 'grey.50', 
-             minHeight: '200px',
-             whiteSpace: 'pre-wrap'
-           }}
-         >
-           {entry.content}
-         </Paper>
+        <DialogContent dividers sx={{ flexGrow: 1 }}>
+          <Paper 
+            elevation={0} 
+            sx={{ 
+              p: 2, 
+              bgcolor: 'grey.50', // fundal deschis
+              minHeight: '200px', // inaltime minima continut
+              whiteSpace: 'pre-wrap' // pastreaza spatierea textului
+            }}
+          >
+            {entry.content} {/* afiseaza continutul intrarii */}
+          </Paper>
 
-         <Box sx={{ mt: 2 }}>
-           <Typography variant="caption" color="text.secondary">
-             Creat la: {formatDate(entry.createdAt)}
-           </Typography>
-           {entry.updatedAt !== entry.createdAt && (
-             <Typography variant="caption" color="text.secondary" sx={{ ml: 2 }}>
-               Ultima modificare: {formatDate(entry.updatedAt)}
-             </Typography>
-           )}
-         </Box>
-       </DialogContent>
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="caption" color="text.secondary">
+              creat la: {formatDate(entry.createdAt)} {/* afiseaza data crearii */}
+            </Typography>
+            {entry.updatedAt !== entry.createdAt && (
+              <Typography variant="caption" color="text.secondary" sx={{ ml: 2 }}>
+                ultima modificare: {formatDate(entry.updatedAt)} {/* afiseaza data ultimei modificari */}
+              </Typography>
+            )}
+          </Box>
+        </DialogContent>
 
-       <DialogActions sx={{ justifyContent: 'space-between', px: 2 }}>
-         <Box sx={{ display: 'flex', gap: 1 }}>
-           <Tooltip title="Traduceți">
-             <IconButton onClick={() => setTranslateOpen(true)}>
-               <TranslateIcon />
-             </IconButton>
-           </Tooltip>
-           <Tooltip title="Partajează">
-             <IconButton onClick={() => setShareOpen(true)}>
-               <ShareIcon />
-             </IconButton>
-           </Tooltip>
-           <Tooltip title="Exportă">
-             <IconButton onClick={() => setExportOpen(true)}>
-               <ExportIcon />
-             </IconButton>
-           </Tooltip>
-         </Box>
-         <Button onClick={onClose}>
-           Închide
-         </Button>
-       </DialogActions>
-     </Dialog>
+        <DialogActions sx={{ justifyContent: 'space-between', px: 2 }}>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Tooltip title="traduce">
+              <IconButton onClick={() => setTranslateOpen(true)}>
+                <TranslateIcon /> {/* icon traducere */}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="partajeaza">
+              <IconButton onClick={() => setShareOpen(true)}>
+                <ShareIcon /> {/* icon partajare */}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="exporta">
+              <IconButton onClick={() => setExportOpen(true)}>
+                <ExportIcon /> {/* icon export */}
+              </IconButton>
+            </Tooltip>
+          </Box>
+          <Button onClick={onClose}>
+            inchide {/* buton pentru inchidere */}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-     {translateOpen && (
-       <TranslateDialog
-         open={translateOpen}
-         onClose={() => setTranslateOpen(false)}
-         content={entry.content}
-         originalLanguage={entry.originalLanguage}
-       />
-     )}
+      {translateOpen && ( /* afiseaza dialogul pentru traducere daca este deschis */
+        <TranslateDialog
+          open={translateOpen}
+          onClose={() => setTranslateOpen(false)}
+          content={entry.content}
+          originalLanguage={entry.originalLanguage}
+        />
+      )}
 
-     <ShareDialog
-       open={shareOpen}
-       onClose={() => setShareOpen(false)}
-       entry={entry}
-     />
+      <ShareDialog
+        open={shareOpen} // dialog partajare deschis
+        onClose={() => setShareOpen(false)} // inchidere dialog partajare
+        entry={entry} // datele intrarii
+      />
 
-     <ExportDialog
-       open={exportOpen}
-       onClose={() => setExportOpen(false)}
-       entry={entry}
-     />
-   </>
- );
-};
+      <ExportDialog
+        open={exportOpen} // dialog export deschis
+        onClose={() => setExportOpen(false)} // inchidere dialog export
+        entry={entry} // datele intrarii
+      />
+    </>
+  )
+}
 
-export default JournalEntryView;
+export default JournalEntryView // exporta componenta

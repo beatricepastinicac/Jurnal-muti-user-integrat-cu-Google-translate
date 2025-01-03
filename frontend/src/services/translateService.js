@@ -1,27 +1,32 @@
-// src/services/translateService.js
+// Importă biblioteca gratuită de traducere
+import translate from '@vitalets/google-translate-api';
+
+// Funcție pentru traducerea textului
+// Serviciu pentru traducere
 const translateText = async (text, targetLanguage, sourceLanguage = 'auto') => {
-    const encodedParams = new URLSearchParams();
-    encodedParams.set('source_language', sourceLanguage);
-    encodedParams.set('target_language', targetLanguage);
-    encodedParams.set('text', text);
-  
-    const options = {
+  try {
+    const response = await fetch('http://localhost:5000/api/translate', {
       method: 'POST',
       headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-        'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
-        'X-RapidAPI-Host': 'text-translator2.p.rapidapi.com'
+        'Content-Type': 'application/json',
       },
-      body: encodedParams
-    };
-  
-    try {
-      const response = await fetch('https://text-translator2.p.rapidapi.com/translate', options);
-      const result = await response.json();
-      return result.data.translatedText;
-    } catch (error) {
-      throw new Error('Eroare la traducere: ' + error.message);
+      body: JSON.stringify({
+        text: text,
+        sourceLang: sourceLanguage,
+        targetLang: targetLanguage,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Eroare la traducere: ${response.statusText}`);
     }
-  };
-  
-  export { translateText };
+
+    const data = await response.json();
+    return data.translatedText;
+  } catch (error) {
+    console.error('Eroare la traducere:', error.message);
+    throw new Error('Nu s-a putut realiza traducerea.');
+  }
+};
+
+export { translateText };

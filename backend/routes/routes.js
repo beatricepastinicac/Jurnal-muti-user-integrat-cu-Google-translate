@@ -1,98 +1,98 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const User = require('./User'); // Ruta pentru modelul User
-const Note = require('./Note'); // Ruta pentru modelul Note
+const express = require('express') // importa express
+const jwt = require('jsonwebtoken') // importa jwt pt gestionarea token-urilor
+const bcrypt = require('bcryptjs') // importa bcrypt pt hashing parola
+const User = require('./User') // modelul user
+const Note = require('./Note') // modelul note
 
-const router = express.Router();
+const router = express.Router() // creeaza un router express
 
-// Middleware pentru autentificare
+// middleware pt autentificare
 const authenticate = (req, res, next) => {
-  const token = req.header('Authorization');
+  const token = req.header('Authorization') // preia token-ul din header
   if (!token) {
-    return res.status(401).json({ error: 'Acces interzis. Token lipsă.' });
+    return res.status(401).json({ error: 'acces interzis. token lipsa.' }) // token absent
   }
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.id;
-    next();
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) // verifica token-ul
+    req.userId = decoded.id // adauga userId la req
+    next() // trece la urmatorul middleware
   } catch (error) {
-    res.status(401).json({ error: 'Token invalid.' });
+    res.status(401).json({ error: 'token invalid.' }) // token invalid
   }
-};
+}
 
-// **CRUD pentru User**
+// **crud pt user**
 router.post('/users', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password } = req.body // preia datele din req
 
   if (!username || !password) {
-    return res.status(400).json({ error: 'Nume utilizator și parolă sunt obligatorii.' });
+    return res.status(400).json({ error: 'nume utilizator si parola sunt obligatorii.' })
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ username, password: hashedPassword });
-    res.status(201).json(user);
+    const hashedPassword = await bcrypt.hash(password, 10) // hash parola
+    const user = await User.create({ username, password: hashedPassword }) // creaza user
+    res.status(201).json(user) // returneaza user-ul creat
   } catch (error) {
-    res.status(400).json({ error: 'Eroare la crearea utilizatorului: ' + error.message });
+    res.status(400).json({ error: 'eroare la crearea utilizatorului: ' + error.message })
   }
-});
+})
 
 router.get('/users', authenticate, async (req, res) => {
   try {
-    const users = await User.findAll();
-    res.json(users);
+    const users = await User.findAll() // preia toti userii
+    res.json(users) // returneaza lista de useri
   } catch (error) {
-    res.status(500).json({ error: 'Eroare la preluarea utilizatorilor.' });
+    res.status(500).json({ error: 'eroare la preluarea utilizatorilor.' })
   }
-});
+})
 
-// **Login și autentificare**
+// login si autentificare
 router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password } = req.body // preia datele din req
 
   if (!username || !password) {
-    return res.status(400).json({ error: 'Nume utilizator și parolă sunt obligatorii.' });
+    return res.status(400).json({ error: 'nume utilizator si parola sunt obligatorii.' })
   }
 
   try {
-    const user = await User.findOne({ where: { username } });
-    if (!user) return res.status(404).json({ error: 'Utilizatorul nu a fost găsit.' });
+    const user = await User.findOne({ where: { username } }) // cauta user dupa username
+    if (!user) return res.status(404).json({ error: 'utilizatorul nu a fost gasit.' })
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: 'Parola incorectă.' });
+    const isMatch = await bcrypt.compare(password, user.password) // verifica parola
+    if (!isMatch) return res.status(401).json({ error: 'parola incorecta.' })
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' }) // genereaza token
+    res.json({ token }) // returneaza token-ul
   } catch (error) {
-    res.status(500).json({ error: 'Eroare la autentificare: ' + error.message });
+    res.status(500).json({ error: 'eroare la autentificare: ' + error.message })
   }
-});
+})
 
-// **CRUD pentru Note**
+// crud pt note
 router.post('/notes', authenticate, async (req, res) => {
-  const { content, userId } = req.body;
+  const { content, userId } = req.body // preia datele din req
 
   if (!content || !userId) {
-    return res.status(400).json({ error: 'Conținutul notei și ID-ul utilizatorului sunt obligatorii.' });
+    return res.status(400).json({ error: 'continutul notei si id-ul utilizatorului sunt obligatorii.' })
   }
 
   try {
-    const note = await Note.create({ content, userId });
-    res.status(201).json(note);
+    const note = await Note.create({ content, userId }) // creaza nota
+    res.status(201).json(note) // returneaza nota creata
   } catch (error) {
-    res.status(400).json({ error: 'Eroare la crearea notei: ' + error.message });
+    res.status(400).json({ error: 'eroare la crearea notei: ' + error.message })
   }
-});
+})
 
 router.get('/notes', authenticate, async (req, res) => {
   try {
-    const notes = await Note.findAll();
-    res.json(notes);
+    const notes = await Note.findAll() // preia toate notele
+    res.json(notes) // returneaza lista de note
   } catch (error) {
-    res.status(500).json({ error: 'Eroare la preluarea notelor.' });
+    res.status(500).json({ error: 'eroare la preluarea notelor.' })
   }
-});
+})
 
-// Exportă router-ul pentru utilizare în server.js
-module.exports = router;
+// exporta router-ul pt utilizare in server.js
+module.exports = router

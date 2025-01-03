@@ -1,39 +1,34 @@
-import axios from 'axios';
+import translate from '@vitalets/google-translate-api'; // importa biblioteca gratuita pentru traduceri
 
-const TRANSLATION_API_URL = 'https://google-translate1.p.rapidapi.com/language/translate/v2';
-const API_KEY = process.env.REACT_APP_RAPIDAPI_KEY;
-
+// serviciu pentru traducere
 const TranslationService = {
-  /**
-   * Funcție pentru a traduce text utilizând API-ul RapidAPI
-   * @param {string} text - Textul care trebuie tradus
-   * @param {string} targetLanguage - Codul limbii țintă (ex: 'fr' pentru franceză, 'es' pentru spaniolă)
-   * @returns {Promise<string>} - Textul tradus
-   */
+  // funcție pentru traducerea textului
   async translateText(text, targetLanguage) {
     try {
-      const response = await axios.post(
-        TRANSLATION_API_URL,
-        new URLSearchParams({
-          q: text,
-          target: targetLanguage,
-        }),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-RapidAPI-Key': API_KEY,
-            'X-RapidAPI-Host': 'google-translate1.p.rapidapi.com',
-          },
-        }
-      );
-
-      // Returnează textul tradus
-      return response.data.data.translations[0].translatedText;
+      // efectuează traducerea folosind biblioteca gratuită
+      const result = await translate(text, { to: targetLanguage });
+      // returnează textul tradus
+      return result.text;
     } catch (error) {
+      // loghează eroarea și aruncă un mesaj clar
       console.error('Eroare la traducere:', error.message);
-      throw new Error('Nu s-a putut traduce textul. Verifică configurarea API-ului.');
+      throw new Error('Nu s-a putut traduce textul. Verifică configurarea serviciului.');
     }
   },
+
+  // funcție pentru detectarea limbii unui text
+  async detectLanguage(text) {
+    try {
+      // efectuează traducerea fără a specifica limba țintă pentru a detecta limba textului
+      const result = await translate(text, { to: 'en' }); // `to: 'en'` pentru a forța detectarea limbii
+      // returnează limba detectată
+      return result.from.language.iso;
+    } catch (error) {
+      // loghează eroarea și aruncă un mesaj clar
+      console.error('Eroare la detectarea limbii:', error.message);
+      throw new Error('Nu s-a putut detecta limba textului.');
+    }
+  }
 };
 
-export default TranslationService;
+export default TranslationService; // exportă serviciul

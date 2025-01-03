@@ -1,50 +1,49 @@
-// src/pages/Journal.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Container, 
   Grid, 
   Paper, 
   Typography, 
-  TextField,
-  InputAdornment,
-  IconButton,
-  Fab,
-  Dialog,
-  Box,
-  List,
-  ListItem,
-  ListItemText,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Snackbar,
-  Alert,
-  CircularProgress
+  TextField, 
+  InputAdornment, 
+  IconButton, 
+  Fab, 
+  Dialog, 
+  Box, 
+  List, 
+  ListItem, 
+  ListItemText, 
+  FormControl, 
+  InputLabel, 
+  Select, 
+  MenuItem, 
+  Snackbar, 
+  Alert, 
+  CircularProgress 
 } from '@mui/material';
 import { 
   Add as AddIcon, 
   Edit as EditIcon, 
-  Delete as DeleteIcon,
-  Search as SearchIcon,
-  Sort as SortIcon
+  Delete as DeleteIcon, 
+  Search as SearchIcon, 
+  Sort as SortIcon 
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import JournalEntryForm from '../components/Journal/JournalEntryForm';
 import JournalEntryDetail from '../components/Journal/JournalEntryDetail';
 
 const Journal = () => {
-  const [entries, setEntries] = useState([]);
-  const [filteredEntries, setFilteredEntries] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState(null);
-  const [detailOpen, setDetailOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState('all');
-  const [sortOrder, setSortOrder] = useState('desc');
-  const [loading, setLoading] = useState(true);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-  const { token } = useAuth();
+  const [entries, setEntries] = useState([]); // toate intrarile
+  const [filteredEntries, setFilteredEntries] = useState([]); // intrari filtrate si sortate
+  const [open, setOpen] = useState(false); // stare pentru dialogul formularului
+  const [selectedEntry, setSelectedEntry] = useState(null); // intrarea selectata pentru editare sau vizualizare
+  const [detailOpen, setDetailOpen] = useState(false); // stare pentru dialogul detaliilor
+  const [searchTerm, setSearchTerm] = useState(''); // textul de cautare
+  const [selectedLanguage, setSelectedLanguage] = useState('all'); // limba selectata pentru filtrare
+  const [sortOrder, setSortOrder] = useState('desc'); // ordinea de sortare (descrescator implicit)
+  const [loading, setLoading] = useState(true); // stare de incarcare
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' }); // notificare
+  const { token } = useAuth(); // token-ul utilizatorului autentificat
 
   const languages = [
     { code: 'all', name: 'Toate limbile' },
@@ -55,7 +54,8 @@ const Journal = () => {
     { code: 'de', name: 'Germană' }
   ];
 
-  const fetchEntries = async () => {
+  // Functie pentru preluarea intrarilor din server
+  const fetchEntries = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch('http://localhost:5000/api/journal', {
@@ -77,12 +77,12 @@ const Journal = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, searchTerm, selectedLanguage, sortOrder]);
 
-  const filterAndSortEntries = (entries, search, language, order) => {
+  // Functie pentru filtrare si sortare
+  const filterAndSortEntries = useCallback((entries, search, language, order) => {
     let filtered = [...entries];
 
-    // Filtrare după căutare
     if (search) {
       filtered = filtered.filter(entry => 
         entry.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -90,12 +90,10 @@ const Journal = () => {
       );
     }
 
-    // Filtrare după limbă
     if (language !== 'all') {
       filtered = filtered.filter(entry => entry.originalLanguage === language);
     }
 
-    // Sortare după dată
     filtered.sort((a, b) => {
       const dateA = new Date(a.createdAt);
       const dateB = new Date(b.createdAt);
@@ -103,16 +101,17 @@ const Journal = () => {
     });
 
     setFilteredEntries(filtered);
-  };
+  }, []);
 
   useEffect(() => {
     fetchEntries();
-  }, [token]);
+  }, [fetchEntries]);
 
   useEffect(() => {
     filterAndSortEntries(entries, searchTerm, selectedLanguage, sortOrder);
-  }, [searchTerm, selectedLanguage, sortOrder, entries]);
+  }, [searchTerm, selectedLanguage, sortOrder, entries, filterAndSortEntries]);
 
+  // Functie pentru stergerea unei intrari
   const handleDelete = async (id) => {
     if (window.confirm('Sigur doriți să ștergeți această intrare?')) {
       try {
@@ -140,6 +139,7 @@ const Journal = () => {
     }
   };
 
+  // Functie pentru editarea unei intrari
   const handleEdit = (entry) => {
     setSelectedEntry(entry);
     setOpen(true);
